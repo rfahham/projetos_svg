@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SVG como imagem</title>
+</head>
+<body>
+<h1>SGV como Imagem</h1>
+
+<img src="img/alarm_clock_2.svg" alt="Relógio">
+
+<h1>SVG como background</h1>
+
+<style type="text/css">
+	
+	.icon {
+		display: inline-block;
+		width: 300px;
+		height: 300px;
+	}
+
+	.icon-music {
+		background-image: url('img/audio_file.svg');
+	}
+
+
+</style>
+
+<i class="icon icon-music"></i>
+
+<h1>SVG como iframe/object/embed</h1>
+
+<p>Bastante lento</p>
+<p>Comportamento diferentes do Browser</p>
+<p>Sem permissão de edição</p>
+
+Não aconselha o uso !!!
+
+<iframe src="img/alarm_clock_2.svg" frameborder="0"></iframe>
+
+<object data="img/alarm_clock_2.svg" type=""></object>
+
+<embed src="img/alarm_clock_2.svg" type=""></embed>
+
+<h1>SVG como data-uri</h1>
+
+<style type="text/css">
+	.icon-logo{
+		width: 200px;
+		height: 200px;
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3E%3Cstyle type='text/css'%3E.red { fill: rgb(241,91,103); } .green { fill: rgb(166,206,57); } .blue { fill: rgb(51,163,220); } @keyframes strokeAnim { 80% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } } @keyframes circle-stroke-anim { 80% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } } @keyframes fill-anim { to { opacity: 1; } } .strokes-cut .wing { fill: none; stroke: white; stroke-dasharray: 2000; stroke-dashoffset: 2000; stroke-width: 4; } .strokes-cut .red { animation: strokeAnim 2.5s 0s ease-out infinite; } .strokes-cut .green { animation: strokeAnim 2.5s 0.2s ease-out infinite; } .strokes-cut .blue { animation: strokeAnim 2.5s 0.4s ease-out infinite; } .fills-cut .wing { opacity: 0; } .fills-cut .red { animation: fill-anim 1.5s 0.6s linear forwards; } .fills-cut .green { animation: fill-anim 1.5s 0.8s linear forwards; } .fills-cut .blue { animation: fill-anim 1.5s 1.0s linear forwards; } .outer-circle { stroke: rgb(88,89,91); stroke-width: 4; fill: none; stroke-miterlimit: 10; stroke-dasharray: 4000; stroke-dashoffset: 4000; animation: circle-stroke-anim 2.5s linear forwards; } .outer-circle-fill{ opacity: 0; fill: rgba(0,0,0,0.1); animation: fill-anim 1s 1.0s linear forwards; }%3C/style%3E%3Ccircle cx='400' cy='400' r='380' class='outer-circle-fill'/%3E%3Ccircle cx='400' cy='400' r='380' class='outer-circle'/%3E%3Cg class='fills-cut'%3E%3Cpath d='M165.8 579.3c-4.8-20.1-6.9-45.9-6.2-68.9 3-108.1 63.9-206.8 144.9-259.1-2.6-16.3-11.5-29.5-26.9-38.5-40.4-23.6-87.2 4.8-113.6 51.2-26.4 46.4-39.6 86.4-43.2 136.4-5.2 69.8 15.3 137.7 50 192.4-1.2-2-3-5.1-5-13.5z' class='wing red'/%3E%3Cpath d='M169.1 586.3c0-2.8.4-5.6.9-8.3 1-5.6 15.6-86.8 83.6-160 60.9-65.3 140.9-104.2 229.8-108.9 11.8-24.5 6.2-46.2-4.2-61.5-15.2-22-65.2-56-155.6-7.6-90.4 48.4-160.8 154-164 270.4-.7 23 1.3 48.8 6.2 68.9 2.1 8.9 4 11.8 5.2 13.8.1.1.2.3.3.4-1.4-2-2.2-4.5-2.2-7.2z' class='wing green'/%3E%3Cpath d='M182.2 599.5c-7.2 0-13.1-5.9-13.1-13.1 0-2.8.4-5.6.9-8.3 1-5.6 15.6-86.8 83.6-160 83.2-89.2 202-129.1 330.4-100 113.6 25.7 108 103.6 86 137.2-22.8 34.8-68.8 53-152.8 45.6-71.6-6.3-136-6.4-214 23.2-58.1 22.1-88.6 48.4-101.9 61.8-2 2-7.9 8.2-10.8 10.7-2.1 1.7-4.9 2.9-8 3l-.3-.1z' class='wing blue'/%3E%3C/g%3E%3Cg class='strokes-cut'%3E%3Cpath d='M182.2 599.5c-4.7 0-8.9-2.5-11.2-6.3-34.8-54.8-55.4-122.8-50.2-192.8 3.6-50 16.8-90 43.2-136.4 26.4-46.4 73.2-74.8 113.6-51.2 15.4 9 24.3 22.2 26.9 38.5' class='wing red'/%3E%3Cpath d='M182.2 599.5c-4.7 0-8.9-2.5-11.2-6.3-1.2-2-3.1-5-5.2-13.8-4.8-20.1-6.9-45.9-6.2-68.9 3.2-116.4 73.6-222 164-270.4 90.4-48.4 140.4-14.4 155.6 7.6 10.4 15.3 16 37.1 4.2 61.5' class='wing green'/%3E%3Cpath d='M182.2 599.5c-7.2 0-13.1-5.9-13.1-13.1 0-2.8.4-5.6.9-8.3 1-5.6 15.6-86.8 83.6-160 83.2-89.2 202-129.1 330.4-100 113.6 25.7 108 103.6 86 137.2-22.8 34.8-68.8 53-152.8 45.6-71.6-6.3-136-6.4-214 23.2-58.1 22.1-88.6 48.4-101.9 61.8-2 2-7.9 8.2-10.8 10.7-2.1 1.7-4.9 2.9-8 3l-.3-.1z' class='wing blue'/%3E%3C/g%3E%3C/svg%3E");
+
+	}
+
+
+</style>
+
+<div class="icon-logo"></div>
+
+</body>
+</html>

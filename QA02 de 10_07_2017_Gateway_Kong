@@ -1,0 +1,170 @@
+QA02 de 10_07_2017_Gateway_Kong
+
+O Kong é o Gateway de APIs que escolhemos para substituir nosso Gateway atual. O Gateway de APIs é um dos serviços de infra mais importante que temos em plataformas. Ele está com a responsabilidade de proteger as APIs de backend. É através dele que passam todas as requests de APIs. Então, ele é peça importante para publicação de conteúdo e serviços que são entregues pelo Backstage.
+
+Precisamos fazer QA02 para validar que o Kong performa e é tão resiliente quanto o nosso Gateway atual.
+
+Atualmente o Kong suporta dois bancos de dados: o Postgres e o Cassandra. Juntamente com o time de banco de dados decidimos fazer um teste de QA02 com o Postgres e, caso a performance esteja a contento, iremos planejar suas subidas para produção.
+
+Temos três cenários projetados para fazer:
+
+1- Testar o Gateway atual para conseguirmos um baseline de performance.
+2- Testar a arquitetura de Gateway atual como camada de autorização e o Kong embaixo dele.
+3- Testar o Kong com uma POC de plugin de autorização que é compatível com o nosso Gateway atual.
+4- Teste de durabilidade da arquitetura. 
+
+Para executarmos os cenários de QA02, o time do Store preparou os scripts de provisionamento e execução do Kong e mais alguns ajustes no módulo AAA. Atualmente estamos montando o cenário 3. Além disso, precisaremos que o time de banco de dados esteja com o Postgres pronto em ambiente de QA02.
+
+Dito isso, temos alguns compromissos para firmar:
+
+1- Quando teremos um Postgres em ambiente de QA02?
+2- Quando teremos o plugin para o cenário 3?
+
+Estamos provisionando localmente o ambiente de desenvolvimento e acreditamos que na próxima segunda-feira (03/07) teremos esta POC pronta para realizarmos os QA02.
+
+De antemão gostaríamos de agradecer em nome de Plataformas pelo empenho de todos em ver esta solução nova no ar. Em especial o time de Banco de dados que tem sido solícito a todo momento e disposto a suportar novas soluções de banco de dados :)
+
+P.S.: Responderemos sobre o compromisso 2 em seguida.
+
+André Augusto da S Cavalcanti <andre.cavalcanti@corp.globo.com>
+Backstage 3 (Store)
+
+
+André Coelho <andre.ribeiro@corp.globo.com>,
+Andre Augusto da S Cavalcanti <andre.cavalcanti@corp.globo.com>,
+Cristiana Valente dos Santos <cristiana.santos@corp.globo.com>,
+Anderson Santos de Souza <anderson.souza@corp.globo.com>,
+Camila Dias <cdias@corp.globo.com>,
+bs-store <bs-store@corp.globo.com>,
+Rodrigo Veiga <rveiga@corp.globo.com>,
+bs-gateway <bs-gateway@corp.globo.com>,
+Pedro Medeiros <pedro.medeiros@corp.globo.com>
+
+
+
+- Cittamp15ld10 - RedHat 6.6 - upstream de uma API válida cadastrada e entregando conteúdo
+
+- Cittamp15ld11 - RedHat 6.6 - KONG
+- Cittamp15ld12 - RedHat 6.6 - KONG => MONGO DB
+
+- Cittamp15ld13 - Cassandra - que é usado pelo kong
+- Cittamp15ld14 - Cassandra - que é usado pelo kong
+- Cittamp15ld15 - Cassandra - que é usado pelo kong
+
+Pool C - Glive com 6 vms
+
+gr == Gateway raiz
+-> == request SEM https
+-s> == request COM https
+1k == 1Kb
+
+# Fast-API < 1k response
+AAA off
+1o. gr -> fast-api | https://gw-kong.backstage.qa02.globoi.com/fast-api/no-ssl/no-auth
+2o. kong -> fast-api | https://cittamp15ld12:8443/fast-api/no-ssl/no-authAAA on
+
+1a. gr -> fast-api | https://gw-kong.backstage.qa02.globoi.com/fast-api/no-ssl/auth
+2a. gr -> kong -> fast-api | https://gw-kong.backstage.qa02.globoi.com/kong/fast-api/no-ssl/auth
+3a. gr -s> kong -> fast-api | https://gw-kong.backstage.qa02.globoi.com/kong-ssl/fast-api/no-ssl/auth
+4a. gr -s> kong -s> fast-api | https://gw-kong.backstage.qa02.globoi.com/kong-ssl/fast-api/ssl/auth
+5a. kong -> fast-api | https://cittamp15ld12:8443/fast-api/no-ssl/auth# Slow-API > 10k response
+
+
+AAA off
+3o. gr -> slow-api | https://gw-kong.backstage.qa02.globoi.com/slow-api/no-ssl/no-auth
+4o. kong -> slow-api | https://cittamp15ld12:8443/slow-api/no-ssl/no-authAAA on
+6a. gr -> slow-api | https://gw-kong.backstage.qa02.globoi.com/slow-api/no-ssl/auth
+7a. gr -> kong -> slow-api | https://gw-kong.backstage.qa02.globoi.com/kong/slow-api/no-ssl/auth
+8a. gr -s> kong -> slow-api | https://gw-kong.backstage.qa02.globoi.com/kong-ssl/slow-api/no-ssl/auth
+9a. gr -s> kong -s> slow-api | https://gw-kong.backstage.qa02.globoi.com/kong-ssl/slow-api/ssl/auth
+10a. kong -> slow-api | https://cittamp15ld12:8443/slow-api/no-ssl/auth# Slowest-API > 10k response with throttle
+
+
+AAA off
+5o. gr -> slowest-api | https://gw-kong.backstage.qa02.globoi.com/slowest-api/no-ssl/no-auth
+6o. kong -> slowest-api | https://cittamp15ld12:8443/slowest-api/no-ssl/no-authAAA on
+11a. gr -> slowest-api | https://gw-kong.backstage.qa02.globoi.com/slowest-api/no-ssl/auth
+12a. gr -> kong -> slowest-api | https://gw-kong.backstage.qa02.globoi.com/kong/slowest-api/no-ssl/auth
+13a. gr -s> kong -> slowest-api | https://gw-kong.backstage.qa02.globoi.com/kong-ssl/slowest-api/no-ssl/auth
+14a. gr -s> kong -s> slowest-api | https://gw-kong.backstage.qa02.globoi.com/kong-ssl/slowest-api/ssl/auth
+15a. kong -> slowest-api | https://cittamp15ld12:8443/slowest-api/no-ssl/auth
+
+
+Fast_API_menor_1k_response
+
+Cenário: 2_KONG_request_SEM_https_fast_api
+
+Com 250 simultâneos
+
+Throughput: 1608 requests/sec
+Tempo de Resposta: 22 milisegundos
+Trafego de rede total: 40 bytes
+Erros: 0
+
+Servidores:
+
+Média de CPU (idle):       74.20 %
+Média de Memória (free):   97.00 %
+Média de loadavg:          4.80
+Média de conexões TCP:     1652
+
+
+2_KONG_request_SEM_https_fast_api
+
+
+https://openresty.org/en/samples.html
+
+
+
+
+Apenas API
+* C/ SSL
+* S/ SSL
+
+GR Apenas
+* AAA on, S/ SSL API 
+* AAA on, C/ SSL API 
+
+Kong Apenas 
+* Kong s/ SSL, AAA off, S/ SSL API 
+* Kong c/ ssl, AAA off,  S/ SSL API 
+* Kong c/ ssl, AAA on, S/ ssl api 
+* Kong c/ ssl, AAA on, C/ ssl api   
+
+3 Juntos (ssl on no GR 'sempre') 
+* AAA on GR, S/ ssl Kong, AAA off kong, s/ SSL api 
+* AAA on GR, C/ ssl kong, AAA off kong, s/ ssl api 
+* AAA on GR, C/ ssl kong, AAA off kong, C/ ssl api (Em tese pior caso) 
+* AAA off GR, S/ ssl kong, AAA on kong, s/ ssl api 
+* AAA off GR, C/ ssl kong, AAA on kong, C/ ssl api
+
+
+
+LOOP upa START COUNT=20
+
+LOOP upa STOP
+
+50% Com delay - 36.898 requests/sec com 94ms - glive e 138ms - Slow / 33% CPU IDLE e 18.71 LOAD AVG
+50% Sem delay -  6.156 requests/sec com 675ms - glive e 667ms - Slow / 5% CPU IDLE e 24.83 LOAD AVG - Apresentou erros 537 - Data Timeout / 2606 - Connection Timeout
+
+
+90% glive / 10% slow Com delay - 36.183 requests/sec com 111ms - glive e 156ms - Slow / 33% CPU IDLE e 18.71 LOAD AVG - Apresentou erros Data Timeout / 183 - Connection Timeout
+90% glive / 10% slow Sem delay -  19.400 requests/sec com 212ms - glive e 213ms - Slow / 13.93% CPU IDLE e 22.50 LOAD AVG - Apresentou erros 11 - Data Timeout / 279 - Connection Timeout
+
+10% glive / 90% slow Com delay - 36.939 requests/sec com 77ms - glive e 121ms - Slow / 35% CPU IDLE e 17.57 LOAD AVG
+10% glive / 90% slow Sem delay -  3.631 requests/sec com 1.108ms - glive e 1130ms - Slow / 3.73% CPU IDLE e 23.74 LOAD AVG - Apresentou erros 441 - Data Timeout / 2172 - Connection Timeout
+
+
+Time: Interatividade
+
+DEV: Rafael Floriano / Michael Benford
+Infra: Rafael Rosa
+DBA: 
+
+
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+
+QA3_CADASTRO_GLIVE
+
+#NODIVIDE
+
+LOOP loop_name START COUNT=100
+
+ASSIGN VARIABLE <var_id sequential 1 100000000000000000>
+ASSIGN VARIABLE <var_hash ######***********######>
+ASSIGN VARIABLE <var_string var_hash var_id>
+
+1 POST http://be.glive.globoi.com/legacy/bbb/users <POST_FILE="QA3_CADASTRO_GLIVE" CONTENT_TYPE="application/json">
+
+LOOP loop_name STOP
+
+{
+"nome": "Cadastro BBB",
+"email": "cadastro.bbb.qa3<SpiVariable>var_string</SpiVariable>@mailinator.com",
+"senha": "1q2w3e4r",
+"servicoOrigem": 6534,
+"sexo": "M"
+}
+
+---------------------------------------------------------------------------------------------------------------------
+
+QA3_COCOON_GLIVE
+
+ASSIGN VARIABLE <myvar QA3_COCOON_GLIVE.$1>
+
+LOOP keep_Alive START COUNT=100
+
+1 POST http://be.glive.globoi.com/cocoon/users <POST_FILE="QA3_COCOON_GLIVE" CONTENT_TYPE="application/json">
+
+LOOP keep_Alive STOP
+
+
+{
+	"glb_id": "<SpiVariable>myvar</SpiVariable>",
+	"service_id": "6534",
+	"ip":"127.0.0.1"
+}
+
+
+
+----------------------------------------------------------------------------------------------------------------------
+
+QA3_CADASTRO_FLOW
+
+{"user":{
+"nome": "Cadastro BBB",
+"email": "cadastro.bbb.qa3.f<SpiVariable>var_string</SpiVariable>@mailinator.com",
+"senha": "1q2w3e4r",
+"servicoOrigem": 6534,
+"sexo": "M"
+}}
+
+
+
+QA3_AUTORIZACAO_GLIVE
+
+
+{
+  "glbid": "<SpiVariable>myvar</SpiVariable>",
+  "serviceId": 6534,
+  "ip": "127.0.0.1"
+}
